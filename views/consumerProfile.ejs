@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- google fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- bootstrap css -->
+    <link rel="stylesheet" href="dist/css/bootstrap.min.css" crossorigin="anonymous">
+    
+    <!-- custom css -->
+    <link rel="stylesheet" href="styles.css">
+
+    <!--Font Awesome -->
+    <link rel="stylesheet" href="fontawesome-free/css/all.css">
+        
+    <title>My Account</title>
+</head>
+<body onload="hide_loading()">
+  <div class="load_div">
+    <div class="spinner-border text-info p-4 spin-load" role="status">
+      <div class="sr-only">Loading...</div>
+    </div>
+  </div>
+  
+  <section class="main-background">
+  <section id="header">
+    <div class="container-fluid">
+        <nav class="navbar navbar-expand-lg">
+            <a class="navbar-brand" href="/consumer"><img src="shop.png" alt="" style="width: 40px;"> Store-On-The-Go</a>
+            <button
+              class="navbar-toggler"
+              type="button"
+              data-toggle="collapse"
+              data-target="#navbarSupportedContent"
+              aria-controls="navbarSupportedContent"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+            >
+            <i class="fas fa-ellipsis-v nav-toggler-icon"></i>
+            <!-- <span class="navbar-toggler-icon"></span> -->
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                  <a class="nav-link" href="/consumer">Explore</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/consumer/location">Location</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/consumer/cart">Cart <i class="fas fa-shopping-cart"></i></a>
+                </li>
+                <li class="nav-item">
+                  <div class="dropdown">
+                    <button class="btn dropdown-toggle nav-btn mx-auto" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Profile <i class="fas fa-user-circle"></i>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                      <a class="dropdown-item" href="/consumer/profile">My Account</a>
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="/logout">Logout <i class="fas fa-sign-out-alt"></i></a>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </nav>
+    </div>
+</section>
+    <section id="profile">
+        <div class="container-fluid row">
+        <div class="col-md-6 testing"><div class="avatar"><div class="avatar-letter"><%= avatar %></div></div></div>
+            <div class="col-md-6">
+              <table>
+                <tr><td class="font-weight-bold custom-table">Name</td><td class="custom-td"><%= user.name %></td></tr>
+                <tr><td class="font-weight-bold custom-table">Username</td><td class="custom-td"><%= user.username %></td></tr>
+                <tr><td class="font-weight-bold custom-table">Contact</td><td class="custom-td"><%= user.contact %></td></tr>
+                <tr><td class="font-weight-bold custom-table">Email</td><td class="custom-td"><%= user.email %></td></tr>
+                <tr><td class="font-weight-bold custom-table">City</td><td class="custom-td"><%= user.city %></td></tr>
+              </table>
+            </div>
+        </div>
+    </section>
+    <section id="addresses" class="container-fluid">
+      <h1 class="col my-auto">Your addresses</h1>
+        <div class="row">
+          <% user.address.forEach(element => { %>
+            <div class="col-lg-3 col-md-4 cart-item">
+              <div class="card mx-auto">
+                <div class="card-body text-left">
+                  <form action="/consumer/deleteAddress" method="POST">
+                    <input type="hidden" name="address" value="<%= element %>" id="">
+                    <p class="card-text"><%= element %></p>
+                    <button type="submit" class="fas fa-minus card-link cart-minus addresses-icon"></button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          <% }); %>
+          <div class="col-lg-3 col-md-4 cart-item">
+            <div class="card mx-auto">
+              <div class="card-body text-left">
+                <form action="/consumer/addAddress" method="post">
+                <textarea class="card-text new-address" placeholder="Add new address" rows="3" name="new_address" required></textarea>
+                <button type="submit" class="fas fa-plus card-link cart-minus addresses-icon"></button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+  </section>
+  <section id="transactions" class="container-fluid row">
+    <h1 class="col my-auto">Transactions</h1>
+    <% transactions.forEach(element => { %>
+    <div class="col-lg-10 card transactions-card">
+      <div class="card-body">
+      <table class="custom-table">
+        <tr><td class="font-weight-bold custom-td first-col">Id</td><td class="custom-td"><%= element.id %></td></tr>
+        <tr><td class="font-weight-bold custom-td first-col">Username</td><td class="custom-td"><%= user.username %></td></tr>
+        <tr><td class="font-weight-bold custom-td first-col">Consumer_id</td><td class="custom-td"><%= element.consumer %></td></tr>
+        <tr><td class="font-weight-bold custom-td first-col">Timestamp</td><td class="custom-td"><%= element.time %></td></tr>
+        <tr><td class="font-weight-bold custom-td first-col">Product</td><td class="custom-td"> | <% element.product.forEach(element1 => { %> product: <%= element1.product %> , quantity: <%= element1.quantity %> , seller: <%= element1.seller %> | <% }); %></td></tr>
+      </table>
+    </div>
+    </div>
+    <% }); %>
+</section>
+  <section class="delete">
+    
+    <form method="post" action="/consumer/delete" class="container-fluid auth-form">
+      <div class="row"><h3 class="col-md-8 col-sm-10 mr-auto">Account options</h3></div>
+      
+      <div class="row">
+        <div class="col-lg-4 col-md-4 mr-auto">
+            <div class="row">
+              <button type="button" name="" value="" class="btn btn-outline-primary btn-seller col-lg-8 col-md-12 col-sm-10" data-toggle="modal" data-target="#deletePopup">Delete account</button>
+            </div>
+        </div>
+      </div>
+                  
+          <div class="modal fade" id="deletePopup" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLongTitle">Delete Account</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  Are you sure you want to delete your account?
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-outline-primary btn-consumer" data-dismiss="modal">No</button>
+                  <button type="submit" class="btn btn-outline-primary btn-seller">Yes</button>
+                </div>
+              </div>
+            </div>
+          </div>
+  </form>
+  </section>
+    <section id="footer">
+        <div class="container-fluid">
+          <p>© Copyright <span id="Copyright"></span> Store-On-The-Go</p>
+        </div>
+    </section>
+  </section>
+    <script src="script.js"></script>
+    <script src="dist/jquery.slim.min.js" crossorigin="anonymous"></script>
+    <script src="core/dist/umd/popper.min.js" crossorigin="anonymous"></script>
+    <script src="dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+</body>
+</html>

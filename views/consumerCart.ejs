@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- google fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- bootstrap css -->
+    <link rel="stylesheet" href="dist/css/bootstrap.min.css" crossorigin="anonymous">
+    
+    <!-- custom css -->
+    <link rel="stylesheet" href="styles.css">
+
+    <!--Font Awesome -->
+    <link rel="stylesheet" href="fontawesome-free/css/all.css">
+    
+    
+
+    <title>My cart</title>
+</head>
+<body onload="hide_loading()">
+  <div class="load_div">
+    <div class="spinner-border text-info p-4 spin-load" role="status">
+      <div class="sr-only">Loading...</div>
+    </div>
+  </div>
+   <!-- <div class="load_div"><img class="load" src="cart.gif" alt=""></div> -->
+  <section class="main-background">
+  <section id="header">
+    <div class="container-fluid">
+        <nav class="navbar navbar-expand-lg">
+            <a class="navbar-brand" href="/consumer"><img src="shop.png" alt="" style="width: 40px;"> Store-On-The-Go</a>
+            <button
+              class="navbar-toggler"
+              type="button"
+              data-toggle="collapse"
+              data-target="#navbarSupportedContent"
+              aria-controls="navbarSupportedContent"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+            >
+            <i class="fas fa-ellipsis-v nav-toggler-icon"></i>
+            <!-- <span class="navbar-toggler-icon"></span> -->
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                  <a class="nav-link" href="/consumer">Explore</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/consumer/location">Location</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/consumer/cart">Cart <i class="fas fa-shopping-cart"></i></a>
+                </li>
+                <li class="nav-item">
+                  <div class="dropdown">
+                    <button class="btn dropdown-toggle nav-btn mx-auto" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Profile <i class="fas fa-user-circle"></i>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                      <a class="dropdown-item" href="/consumer/profile">My Account</a>
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="/logout">Logout <i class="fas fa-sign-out-alt"></i></a>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </nav>
+    </div>
+</section>
+    <section id="cart">
+        <div class="container-fluid row">
+          <% if(products.length === 0) { %>
+            <div class="mx-auto"><img class="col-lg-6 col-md-8 col-sm-8" src="empty_cart.svg" alt=""></div>
+            <h3 style="margin-top: 50px; color: #FC5185;" class="mx-auto">Cart is empty</h3>
+          <% } %>
+          <% products.forEach(element => { %>
+            <div class="col-lg-4 col-md-6 cart-item">
+              <form action="/consumer/cartQuantity" method="post">
+                <input type="hidden" name="product" value="<%= element.product._id %>">
+              <div class="card mx-auto">
+                <a href=""><img src="data:<%= element.product.image.mimetype %>;base64,<%= element.product.image.data.toString('base64') %>" class="card-img-top" alt="..."></a>
+                <div class="card-body text-left">
+                  <a href=""><h5 class="card-title"><%=element.product.name%></h5></a>
+                  <p class="card-text custom-height-card-text"><%=element.product.description%></p>
+                  <span href="#" class="cart-price">₨. <%=element.product.price%></span>
+                  <span class="cart-quantity"><button type="submit" name="operation" value="minus" class="fas fa-minus fa-1x card-link cart-minus"></button><span class="card-link cart-quantity-number"><%= element.quantity %></span><button type="submit" name="operation" value="plus" class="fas fa-plus card-link cart-minus"></button></span>
+                </div>
+              </div>
+            </form>
+            </div>
+          <% }); %>
+        </div>
+        
+        <div class="container-fluid">
+          <div class="row"><hr class="col"></div>
+          <div class="row">
+          <h1 class="text-left col total">Total: <%= total %></h1>
+        </div>
+        </div>
+    </section>
+    <% if(products.length !== 0) { %>
+      
+    <form action="/consumer/checkOut" method="POST">
+      
+        <textarea style="visibility: hidden;" name="allProducts"><% products.forEach(element => { %><%= element.product._id %>half<%= element.quantity %>half<%= element.product.seller %>half<%= element.product.name %>full<% }); %></textarea>
+      
+      
+      <input type="hidden" name="totalPrice" value="<%= total %>"">
+    <section id="address">
+      <div class="container-fluid">
+        <div class="row">
+          <h1 class="col my-auto">Select your address</h1>
+        </div>
+        <% addresses.forEach(element => { %>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="addresses" id="exampleRadios0" value="<%= element %>">
+        <label class="form-check-label" for="exampleRadios0">
+          <%= element %>
+        </label>
+      </div>
+      <% }); %>
+      </div>
+    </section>
+    <div class="row container-fluid">
+      <img class="col-md-5 col-sm-6 my-auto ml-auto" src="pay.svg"></img>
+    </div>
+    <section id="payment">
+      <div class="container-fluid">
+        <div class="row">
+          <h1 class="col my-auto">Choose payment option</h1>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="payment_option" id="exampleRadios1" value="Pay at shop">
+          <label class="form-check-label" for="exampleRadios1">
+            Pay at shop
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="payment_option" id="exampleRadios2" value="Cash on delivery">
+          <label class="form-check-label" for="exampleRadios2">
+            Cash on delivery
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="payment_option" id="exampleRadios3" value="Online payment">
+          <label class="form-check-label" for="exampleRadios3">
+            Online payment
+          </label>
+        </div>
+        <button type="submit" name="" class="btn btn-outline-primary btn-seller col-lg-3 col-md-4 col-sm-5">Proceed to Checkout <i class="fas fa-arrow-alt-circle-right"></i></button>
+        </div>
+    </section>
+  </form>
+  <% } %>
+    <section id="footer">
+        <div class="container-fluid">
+          <p>© Copyright <span id="Copyright"></span> Store-On-The-Go</p>
+        </div>
+    </section>
+  </section>
+
+    <script src="script.js"></script>
+    <script src="dist/jquery.slim.min.js" crossorigin="anonymous"></script>
+    <script src="core/dist/umd/popper.min.js" crossorigin="anonymous"></script>
+    <script src="dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+</body>
+</html>
